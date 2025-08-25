@@ -128,8 +128,10 @@ export default function AdminPage() {
         const response = await fetch(`/api/admin/members/${memberId}`, {
           method: 'DELETE'
         })
+        const result = await response.json()
+        console.log("result",result)
 
-        if (response.ok) {
+        if (result.success) {
           fetchData()
         }
       } catch (error) {
