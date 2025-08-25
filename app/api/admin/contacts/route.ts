@@ -12,6 +12,7 @@ export async function GET() {
       .from('contacts')
       .select('*')
       .order('createdAt', { ascending: false })
+      console.log('data',data)
 
     if (error) throw error
 
