@@ -35,10 +35,10 @@ export default function ContactPage() {
         setMessage('Thank you! Your message has been sent successfully.')
         // e.currentTarget.reset()
       } else {
-        setMessage('Sorry, there was an error sending your message. in the else')
+        setMessage('Sorry, there was an error sending your message.')
       }
     } catch (error) {
-      setMessage('Sorry, there was an error sending your message. in the catch')
+      setMessage('Sorry, there was an error sending your message.')
     }
     
     setIsSubmitting(false)
@@ -64,10 +64,11 @@ export default function ContactPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
+      const result = await response.json()
 
-      if (response.ok) {
+      if (result.success) {
         setMessage('Thank you! Your booking request has been submitted successfully.')
-        e.currentTarget.reset()
+        // e.currentTarget.reset()
       } else {
         setMessage('Sorry, there was an error submitting your booking.')
       }
