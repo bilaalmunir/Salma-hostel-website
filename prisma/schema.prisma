@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Member {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  cnic      String?
+  roomType  String?
+  checkIn   DateTime?
+  checkOut  DateTime?
+  feeStatus String   @default("unpaid") // "paid" or "unpaid"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("members")
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  cnic      String
+  roomType  String
+  checkIn   DateTime
+  checkOut  DateTime
+  createdAt DateTime @default(now())
+
+  @@map("bookings")
+}
