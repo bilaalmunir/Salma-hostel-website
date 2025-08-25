@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function POST(request: NextRequest) {
   try {
+    const id = crypto.randomUUID()
+    const updated_at = new Date().toISOString()
     const { name, email, cnic, roomType, checkIn, checkOut } = await request.json()
+    console.log('Booking request:', name, email, cnic, roomType, checkIn, checkOut)
 
     // Validate required fields
     if (!name || !email || !cnic || !roomType || !checkIn || !checkOut) {
@@ -13,19 +21,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save to database
-    const booking = await prisma.booking.create({
-      data: {
-        name,
-        email,
-        cnic,
-        roomType,
-        checkIn: new Date(checkIn),
-        checkOut: new Date(checkOut),
-      },
-    })
+    // Insert into Supabase table `bookings`
+    const { data, error } = await supabase
+      .from('bookings')
+      .insert([
+        {
+          id:id,
+          name,
+          email,
+          cnic,
+          roomType,
+          checkIn: checkIn,
+          checkOut: checkOut,
+          createdAt: new Date().toISOString(),
+        },
+      ])
+      .select('*') // Return inserted record(s)
 
-    return NextResponse.json({ success: true, booking })
+    if (error) throw error
+
+    return NextResponse.json({ success: true, booking: data[0] })
   } catch (error) {
     console.error('Error saving booking:', error)
     return NextResponse.json(

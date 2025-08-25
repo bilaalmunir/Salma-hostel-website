@@ -27,15 +27,18 @@ export default function ContactPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
+      console.log(response)
+      const result = await response.json()
+      console.log("res",result)
 
-      if (response.ok) {
+      if (result.success) {
         setMessage('Thank you! Your message has been sent successfully.')
-        e.currentTarget.reset()
+        // e.currentTarget.reset()
       } else {
-        setMessage('Sorry, there was an error sending your message.')
+        setMessage('Sorry, there was an error sending your message. in the else')
       }
     } catch (error) {
-      setMessage('Sorry, there was an error sending your message.')
+      setMessage('Sorry, there was an error sending your message. in the catch')
     }
     
     setIsSubmitting(false)

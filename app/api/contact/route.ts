@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -19,16 +18,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save to database
-    const contact = await prisma.contact.create({
-      data: {
-        name,
-        email,
-        message,
-      },
-    })
+    // Insert into Supabase table `contacts`
+    const { data, error } = await supabase
+      .from('contacts') // ✅ use plural table name
+      .insert([{ name, email, message, createdAt: new Date().toISOString() }])
+      .select('*')
 
-    return NextResponse.json({ success: true, contact })
+    if (error) throw error
+
+    return NextResponse.json({ success: true, contact: data[0] })
   } catch (error) {
     console.error('Error saving contact:', error)
     return NextResponse.json(
